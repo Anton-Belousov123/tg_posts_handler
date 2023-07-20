@@ -24,7 +24,6 @@ async def main():
         print('Readed chats')
         for chat in chats:
             # Adding new position
-            chat.last_update = int(time.time())
             if chat.chat_id == '':
                 print('Adding new Chat')
                 data = await client(ImportChatInviteRequest(chat.link.split('+')[1]))
@@ -42,10 +41,15 @@ async def main():
                 try:
                     message_time = message.date.timestamp()
                     if chat.last_update == '':
-                        chat.last_update = int(time.time() - 60 * 60 * 24 * 90)
-                    if int(message_time) < chat.last_update:
+                        chat.last_update = int(time.time()) - 60 * 60 * 24 * 90
+
+                    print(message_time, chat.last_update, message.message)
+
+                    if int(message_time) < int(chat.last_update):
+                        print('Breaking')
                         break
                     message_text = message.message
+                    print(message_text)
                     keyword_contains = False
                     # Trying to find keywords
                     for keyword in keywords:
@@ -68,6 +72,8 @@ async def main():
 
                 except Exception as e:
                     print(e)
+
+            chat.last_update = int(time.time())
             ggl.update_group_info(chat)  # Updating group information
         time.sleep(60)
 

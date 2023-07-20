@@ -35,7 +35,7 @@ def get_chats() -> list[SearchGroup]:
     values = sheet.get_all_values()[1::]
     resp = []
     for v in values:
-        resp.append(SearchGroup(name=v[1], last_update=v[2], chat_id=v[3], link=v[0]))
+        resp.append(SearchGroup(name=v[3], last_update=v[1], chat_id=v[2], link=v[0]))
     return resp
 
 
