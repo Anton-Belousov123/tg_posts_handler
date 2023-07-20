@@ -2,6 +2,7 @@ import time
 
 from telethon import TelegramClient
 from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.tl.functions.channels import JoinChannelRequest
 
 import ggl
 from ggl import SearchResult
@@ -29,9 +30,10 @@ async def main():
                     print('Adding new Chat')
                     if '+' in chat.link:
                         used_link = chat.link.split('+')[1]
+                        data = await client(ImportChatInviteRequest(used_link))
                     else:
-                        used_link = chat.link.split('/')[-1]
-                    data = await client(ImportChatInviteRequest(used_link))
+                        used_link = chat.link
+                        data = await client(JoinChannelRequest(used_link))
                     chat.name = data.chats[0].title
                     chat.chat_id = data.chats[0].id
                     dialogs = await client.get_dialogs()
