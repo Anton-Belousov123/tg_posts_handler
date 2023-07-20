@@ -50,13 +50,11 @@ async def main():
                         if chat.last_update == '':
                             chat.last_update = int(time.time()) - 60 * 60 * 24 * 90
 
-                        print(message_time, chat.last_update, message.message)
 
                         if int(message_time) < int(chat.last_update):
                             print('Breaking')
                             break
                         message_text = message.message
-                        print(message_text)
                         keyword_contains = False
                         # Trying to find keywords
                         for keyword in keywords:
