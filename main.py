@@ -84,7 +84,7 @@ async def main():
             except Exception as e:
                 try:
                     sleep_time = str(e).split()[3]
-                    print(datetime.datetime.now().date(), 'Спим', sleep_time)
+                    print(datetime.datetime.now().time(), 'Спим', sleep_time)
                     time.sleep(int(sleep_time))
                 except:
                     pass
