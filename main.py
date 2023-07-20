@@ -23,62 +23,65 @@ async def main():
         keywords: list[str] = ggl.get_keywords()
         print('Readed chats')
         for chat in chats:
-            # Adding new position
-            if chat.chat_id == '':
-                print('Adding new Chat')
-                if '+' in chat.link:
-                    used_link = chat.link.split('+')[1]
-                else:
-                    used_link = chat.link.split('/')[-1]
-                data = await client(ImportChatInviteRequest(used_link))
-                chat.name = data.chats[0].title
-                chat.chat_id = data.chats[0].id
-                dialogs = await client.get_dialogs()
+            try:
+                # Adding new position
+                if chat.chat_id == '':
+                    print('Adding new Chat')
+                    if '+' in chat.link:
+                        used_link = chat.link.split('+')[1]
+                    else:
+                        used_link = chat.link.split('/')[-1]
+                    data = await client(ImportChatInviteRequest(used_link))
+                    chat.name = data.chats[0].title
+                    chat.chat_id = data.chats[0].id
+                    dialogs = await client.get_dialogs()
 
-            # Finding dialog
-            print('Finding dialog')
-            for dialog in dialogs:
-                if dialog.name == chat.name:
-                    break
-            print('Reading messages')
-            async for message in client.iter_messages(dialog):  # Reading messages
-                try:
-                    message_time = message.date.timestamp()
-                    if chat.last_update == '':
-                        chat.last_update = int(time.time()) - 60 * 60 * 24 * 90
-
-                    print(message_time, chat.last_update, message.message)
-
-                    if int(message_time) < int(chat.last_update):
-                        print('Breaking')
+                # Finding dialog
+                print('Finding dialog')
+                for dialog in dialogs:
+                    if dialog.name == chat.name:
                         break
-                    message_text = message.message
-                    print(message_text)
-                    keyword_contains = False
-                    # Trying to find keywords
-                    for keyword in keywords:
-                        if keyword.lower() in message_text.lower():
-                            keyword_contains = True
+                print('Reading messages')
+                async for message in client.iter_messages(dialog):  # Reading messages
+                    try:
+                        message_time = message.date.timestamp()
+                        if chat.last_update == '':
+                            chat.last_update = int(time.time()) - 60 * 60 * 24 * 90
 
-                    if keyword_contains:
-                        print('Keyword found!')
-                        user_id = message.from_id.user_id
-                        # Getting participant
-                        print('Getting participant')
-                        participant = await client.get_entity(int(user_id))
-                        print(participant)
-                        # Writing result
-                        print('Writing result')
-                        ggl.write_result(SearchResult(chat_id=participant.id, from_group=chat.name, message_text=message_text,
-                                                      message_time=str(message.date), name=participant.first_name,
-                                                      surname=participant.last_name, phone=participant.phone,
-                                                      username=participant.username))
+                        print(message_time, chat.last_update, message.message)
 
-                except Exception as e:
-                    print(e)
+                        if int(message_time) < int(chat.last_update):
+                            print('Breaking')
+                            break
+                        message_text = message.message
+                        print(message_text)
+                        keyword_contains = False
+                        # Trying to find keywords
+                        for keyword in keywords:
+                            if keyword.lower() in message_text.lower():
+                                keyword_contains = True
 
-            chat.last_update = int(time.time())
-            ggl.update_group_info(chat)  # Updating group information
+                        if keyword_contains:
+                            print('Keyword found!')
+                            user_id = message.from_id.user_id
+                            # Getting participant
+                            print('Getting participant')
+                            participant = await client.get_entity(int(user_id))
+                            print(participant)
+                            # Writing result
+                            print('Writing result')
+                            ggl.write_result(SearchResult(chat_id=participant.id, from_group=chat.name, message_text=message_text,
+                                                          message_time=str(message.date), name=participant.first_name,
+                                                          surname=participant.last_name, phone=participant.phone,
+                                                          username=participant.username))
+
+                    except Exception as e:
+                        print(e)
+
+                chat.last_update = int(time.time())
+                ggl.update_group_info(chat)  # Updating group information
+            except:
+                pass
         time.sleep(60)
 
 
