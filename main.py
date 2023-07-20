@@ -26,7 +26,11 @@ async def main():
             # Adding new position
             if chat.chat_id == '':
                 print('Adding new Chat')
-                data = await client(ImportChatInviteRequest(chat.link.split('+')[1]))
+                if '+' in chat.link:
+                    used_link = chat.link.split('+')[1]
+                else:
+                    used_link = chat.link.split('/')[-1]
+                data = await client(ImportChatInviteRequest(used_link))
                 chat.name = data.chats[0].title
                 chat.chat_id = data.chats[0].id
                 dialogs = await client.get_dialogs()
