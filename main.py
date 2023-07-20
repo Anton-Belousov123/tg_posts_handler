@@ -80,8 +80,8 @@ async def main():
 
                 chat.last_update = int(time.time())
                 ggl.update_group_info(chat)  # Updating group information
-            except:
-                pass
+            except Exception as e:
+                print(e)
         time.sleep(60)
 
 
