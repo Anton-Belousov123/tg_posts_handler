@@ -10,8 +10,8 @@ from ggl import SearchGroup
 
 
 async def main():
-    api_id = 2724818
-    api_hash = '6c677b0f0e2af14a53cbf0c0eafe5886'
+    api_id = 28027917
+    api_hash = '382bb3f2583d794954ebe72e03d56db6'
     client = TelegramClient('clients_scraper', api_id, api_hash)
     await client.start()
     await client.connect()
@@ -24,7 +24,7 @@ async def main():
         print('Readed chats')
         for chat in chats:
             # Adding new position
-
+            chat.last_update = int(time.time())
             if chat.chat_id == '':
                 print('Adding new Chat')
                 data = await client(ImportChatInviteRequest(chat.link.split('+')[1]))
@@ -42,7 +42,7 @@ async def main():
                 try:
                     message_time = message.date.timestamp()
                     if chat.last_update == '':
-                        chat.last_update = 0
+                        chat.last_update = int(time.time() - 60 * 60 * 24 * 90)
                     if int(message_time) < chat.last_update:
                         break
                     message_text = message.message
@@ -68,7 +68,6 @@ async def main():
 
                 except Exception as e:
                     print(e)
-            chat.last_update = int(time.time())
             ggl.update_group_info(chat)  # Updating group information
         time.sleep(60)
 
