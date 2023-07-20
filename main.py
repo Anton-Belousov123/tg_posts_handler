@@ -24,6 +24,7 @@ async def main():
         keywords: list[str] = ggl.get_keywords()
         print('Readed chats')
         for chat in chats:
+            print('Начата обработка', chat)
             try:
                 # Adding new position
                 if chat.chat_id == '':
@@ -67,7 +68,6 @@ async def main():
                             # Getting participant
                             print('Getting participant')
                             participant = await client.get_entity(int(user_id))
-                            print(participant)
                             # Writing result
                             print('Writing result')
                             ggl.write_result(SearchResult(chat_id=participant.id, from_group=chat.name, message_text=message_text,
@@ -81,7 +81,13 @@ async def main():
                 chat.last_update = int(time.time())
                 ggl.update_group_info(chat)  # Updating group information
             except Exception as e:
-                print(e)
+                try:
+                    sleep_time = str(e).split()[3]
+                    print('Спим', sleep_time)
+                    time.sleep(int(sleep_time))
+                except:
+                    pass
+
         time.sleep(60)
 
 
