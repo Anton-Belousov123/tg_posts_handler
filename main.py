@@ -12,9 +12,9 @@ from ggl import SearchGroup
 
 
 async def main():
-    api_id = 28027917
-    api_hash = '382bb3f2583d794954ebe72e03d56db6'
-    client = TelegramClient('clients_scraper', api_id, api_hash)
+    api_id = 28261547
+    api_hash = '90bdcf0e506a5fa08e688e5524032228'
+    client = TelegramClient('clients_scraper2', api_id, api_hash)
     await client.start()
     await client.connect()
     print('Connected')
